@@ -1,0 +1,53 @@
+# Site settings
+course_name: "CSCI6410/CSCI4148/EPAH6410: Applied Research in Health Data Science"
+course_description: "This course is an introduction to the application of data science methods to health data within interdisciplinary research contexts. Students will be introduced to the main types of health data and their principal analysis methods while developing key research skills specific to effectively working at the intersection of medicine and computer science.  This will encompass developing technical skills in the robust/reproducible analysis of data from medical databases, radiological imaging, electronic medical records, and physiological time-series data. Students will also gain specific training in developing interdisciplinary health data science research proposals including key considerations such as research ethics, data legislation, knowledge translation, and effective collaboration."
+course_semester: "Summer 2024-2025"
+
+baseurl: "/health_data_science_research_2025" # the subpath of your site, e.g. /blog/
+url: "https://maguire-lab.github.io/" # the base hostname & protocol for your site
+
+schoolname: "Dalhousie University"
+schoolurl: "https://dal.ca"
+twitter_username: finlaym 
+
+address: |
+    4242 Mona Campbell Building
+    Studley Campus
+    Dalhousie University
+
+### Do not change the followings unless you know what you are doing ###
+
+# Build settings
+lsi: false
+safe: true
+incremental: false
+highlighter: rogue
+markdown: kramdown
+gist:
+  noscript: false
+kramdown:
+  math_engine: mathjax
+  syntax_highlighter: rouge
+
+# Other options
+permalink: blog/:year/:month/:title
+excerpt_separator: "<!--more-->"
+
+include: ['_images', '_css']
+
+dateformat: "%Y/%m/%d"
+
+future: true
+collections:
+    events:
+        output: true
+    lectures:
+        output: true
+    literature_class:
+        output: true
+    proposal_class:
+        output: true
+    practicals:
+        output: true
+    announcements:
+        output: false

@@ -1,0 +1,29 @@
+Name	Email
+Calagari, Mehrana	MH630723@DAL.CA
+Deore, Prabuddha	PR701316@DAL.CA
+Ding, Yu	yz475350@dal.ca
+Kethireddy, Pradeep Reddy	PR430805@DAL.CA
+Koduru, Venkata Krishna Bharadwaj	VN575604@DAL.CA
+Luo, Yizhan	YZ630851@DAL.CA
+Mewada, Jay	JY260518@DAL.CA
+Shen, Ziyi	ZY892564@DAL.CA
+Solanki, Nikhil	NK966428@DAL.CA
+Umeigbo, Ifechukwu	IF990215@DAL.CA
+Vasaya, Nensey Nadir	NN290581@DAL.CA
+Singh, Cassidy	cs767512@dal.ca
+Sahin, Berke	br992197@dal.ca
+Tabassum, Bushra	bs301462@dal.ca
+Thiessen, Claire	CL303613@DAL.CA
+de Moraes Gargi Correa, Owen	bt640081@dal.ca
+Boonyapakorn, Ninja	kw256309@dal.ca
+Alansari, Abdulaziz	ab332855@dal.ca
+MacGillivray, Angus	an368633@dal.ca
+Zhao, Yuhan	yh562106@dal.ca
+Shah, Shivam	sh847329@dal.ca
+Pang, Pai	pz887472@dal.ca
+
+
+
+
+
+

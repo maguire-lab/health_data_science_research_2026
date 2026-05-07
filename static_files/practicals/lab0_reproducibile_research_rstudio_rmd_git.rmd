@@ -1,0 +1,917 @@
+---
+title: 'Practical 0: Reproducible Research and Exploratory Data Analysis in R'
+author: "Finlay Maguire"
+date: "`r Sys.Date()`"
+output:
+  html_document: default
+  pdf_document: default
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Practical 0: Reproducible research in R
+
+## Objectives
+
+-   Begin to familiarise yourself with RStudio (and by extension R's
+    tidyverse)
+-   Learn how to create basic data visualisations using ggplot2
+-   Use Rmarkdown to create literate/documented analyses
+-   Use git to version control your code in a github repository
+
+## Terminology
+
+We've already thrown around a few new terms, so let's define them before
+we proceed.
+
+-   **R**: The open-source statistical programming language we will use
+    throughout this course.
+-   **RStudio**: R's most popular integrated development environment
+    (IDE). Rstudio offers a way to conveniently write R, run R, install
+    R libraries, and perform version control.
+-   **Library**: R's equivalent of modules/packages/toolchains/toolboxes
+    in other languages. They provide useful analysis methods, plotting
+    functions, and development options.
+-   **TidyVerse**: A very popular collection of R libraries built around
+    composability of functions, including dplyr (data manipulation) and
+    ggplot (visualisation of data).
+-   **Rmarkdown**: R's literate programming library allowing creation of
+    runnable notebooks that contain documentation and code.
+-   **Git**: The leading decentralised version control system we will
+    use throughout this course.
+-   **GitHub**: The main website you can use to version control your
+    project
+
+## Setting up your system
+
+Unfortunately, this course will not be able to give a comprehensive
+introduction in R as a whole. However, there are lots of available R
+resources online to help your training (e.g., [Harvard's Chan Schools
+Introductory
+Course](https://hbctraining.github.io/Training-modules/IntroR/) or Roger
+Peng's [Coursera
+courses](https://www.coursera.org/learn/r-programming)).
+
+R also has some of the best library documentation with a standardised
+requirement of full manuals and vignettes required to list libraries on
+the main repositories (e.g., CRAN or Bioconducter).
+
+All of you will have learned at least 1 programming language or
+stastical package so the usual advice applies: experiment, look up the
+documentation, feel free to google wildly and often!
+
+## Submitting assignment
+
+For each practical you will have to create a new rmarkdown notebook that
+contains the answers and any code required to reproducibly generate them
+(in **bold**)
+
+You will then submit the knitted notebook in html format via Brightspace
+and include a link to this notebook in a git repository of your choice
+(this could be in a public or private git repo or Dal's institutional
+account, just enable access from my username `github`:fmaguire or
+`gitlab.cs.dal.ca`:finlaym if it is a private repository).
+
+These are due the midnight before the next week's practical.
+
+## Getting started
+
+### 1. Install Rstudio and Git
+
+Go to the [RStudio](https://rstudio.com/products/rstudio/download/)
+website to download and install the software.
+
+You may well have git already installed but if not please install it
+following the [official
+documentation](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
+
+### 2. Open Rstudio
+
+Rstudio is split up into 4 components by default (although this can be
+tweaked in the settings):
+
+-   On the bottom left is the Console Terminal (where you can run R code
+    and any GUI-based interactions will be documented with appropriate R
+    code)
+
+-   On the bottom right is the Files pane (lists files in your project)
+
+-   On the top left is the Editor pane (standard code
+    editing/highlighting as appropriate with vim/emacs keybindings
+    configurable)
+
+-   On the top right is the Environment pane (lists all currently
+    defined variables)
+
+Try typing `x <- 2` in the Console and hit enter, what do you get in the
+Environment pane?
+
+### 3. Create a new project
+
+Create a new Rproject and configure git to work with this project
+(connected to the appropriate repository on gitlab/github).
+
+### 4. Gett ing Familiar with basic R
+
+#### 4.1. Vector == Array
+
+-   In R, a vector is a basic data structure that represents a
+    collection of elements of the same data type. It is one-dimensional
+    and can hold data of any type, such as numeric, character, or
+    logical values.
+-   vector start from 1 not 0
+-   various functions for vector are such as length(), sum(), mean(),
+    and max()
+
+```{r}
+myVector <- c(1,4,3,2)
+myVector
+print(myVector[2]) # print the second element from beginning of vector
+print(myVector[-2]) # print the second element from the end of vector
+print(myVector[2:3]) # print the element from second to third of the vector
+print(myVector[myVector > 2]) # print all element bigger that 2
+
+cat("The second element of x is ", myVector[2], "\n") # print with format
+
+print(length(myVector)) # print the length of the vector
+myVector <- c(myVector, 90) # adding at the end	
+myVector <- c(30, myVector) # adding at the beginning
+```
+
+#### 4.2 Factor
+
+In R, a factor is a categorical variable that represents a discrete
+number of possible values, each of which belongs to a specific category.
+Factors are often used to represent qualitative or nominal data. The
+levels of a factor are the unique values that it can take. by default
+based on alphabet
+
+```{r}
+expression <- c("low", "high", "medium", "high", "low", "medium", "high")
+expression <- factor(expression)
+expression
+
+# to change the order
+levels(expression) <- c("low", "medium", "high")
+expression
+
+# Create a factor with custom levels
+education <- c("high school", "bachelor's", "master's", "bachelor's", "high school")
+education_factor <- factor(education, levels = c("high school", "bachelor's", "master's"))
+print(education_factor)
+```
+
+#### 4.3 Matrix = 2D array
+
+In R, a matrix is a two-dimensional data structure that contains
+elements of the same data type, arranged in rows and columns. It is a
+useful data structure for storing and manipulating numeric data.
+
+```{r}
+m <- matrix(c(1, 2, 3, 4, 5, 6), nrow = 3, ncol = 2)
+print(m)
+
+# get the shape of matrix
+shape <- dim(m)
+print(shape)
+
+# re-shape of the matrix
+dim(m) <- c(2, 3)
+print(m)
+# to print the first row
+print(m[1, ])
+# to print the second column
+print(m[, 2])
+# to create a new matrix of the column 2 to 3
+m2 <- cbind(m[, 2:3])
+print(m2)
+```
+
+#### 4.4 DataFrame/Tibble
+
+In R, a dataframe is a two-dimensional rectangular table-like structure
+that consists of rows and columns. The rows correspond to cases
+(observations), while the columns correspond to variables (attributes).
+Each column in a dataframe can have a different data type (e.g.,
+character, numeric, factor, etc.), but all columns must have the same
+length. Dataframes are the most commonly used data structure in R and
+are often used for data manipulation, cleaning, and analysis.
+
+```{r}
+df <- data.frame(
+  name = c("Alice", "Bob", "Charlie"),
+  age = c(25, 30, 35),
+  gender = c("female", "male", "male")
+)
+
+print(df)
+print(df$age) # return an array
+print(df["age"]) # return an df
+```
+
+#### 4.4 Functions
+
+x = c(1,2,3)
+
+y = c(2,5,3)
+
+Some statistical functions:
+
+-   mean(x) #mean of a numeric vector x.
+-   sd(x) #standard deviation of a numeric vector x.
+-   var(x) #variance of a numeric vector x.
+-   median(x) #median of a numeric vector x.
+-   min(x) #returns the minimum value of a numeric vector x.
+-   max(x) #returns the maximum value of a numeric vector x.
+-   cor(x, y) #calculates the correlation coefficient between two
+    numeric vectors x and y.
+-   cov(x, y) #calculates the covariance between two numeric vectors x
+    and y.
+-   ?round \# for help and understand the function
+-   args(round) \# returns the names of the arguments
+-   example("round") \# gives you some examples of the function
+
+\*\* we can also have a chain of functions \*\*
+
+```{r}
+library(dplyr)
+
+x = c(1,2,3)
+y = c(2,5,3)
+
+#  to chain together multiple functions in a single line of code 
+x <- sqrt(16) %>% exp() # pass the output of sqrt to exp input and ...
+x
+```
+
+#### 4.4 Packages
+
+R packages are collections of functions, data, and documentation that
+extend the capabilities of R. They are a powerful tool that makes it
+easy to perform complex tasks in R. Once installed, R packages can be
+loaded into R sessions using the library() function. It is important to
+note that even if you have previously installed a package, you will need
+to load it again in each new R session to be able to use it.
+
+You can also use search() function to check which library are loaded so
+far
+
+##### 4.4.1 Install packages and load them
+
+```{r package manager, message=FALSE, warning=FALSE}
+# install packages only once
+# install.packages(c("datasauRus", "tidyverse", "dplyr", "readr", "tibble", "ggplot2"))
+
+# load only needed packages in each project
+library(datasauRus)
+library(tidyverse)
+library(dplyr)
+library(readr)
+library(tibble)
+library(ggplot2)
+
+search()
+```
+
+##### 4.4.2 Core tidyverse
+
+The core tidyverse includes the packages that you’re likely to use in
+everyday data analyses. As of tidyverse 1.3.0, the following packages
+are included in the core tidyverse: ggplot2, dplyr, tidyr, readr, purrr,
+tibble, stringr, forcats
+
+The tidyverse also includes many other packages with more specialized
+usage. They are not loaded automatically with library(tidyverse), so
+you’ll need to load each one with its own call to library().
+
+##### 4.4.3 dplyr
+
+dplyr provides a grammar of data manipulation, providing a consistent
+set of verbs that solve the most common data manipulation challenges.
+
+- dplyr::mutate()
+
+Used for adding new variables to a dataset. Here's an example of adding
+a new variable that calculates the total price of a product based on its
+unit price and quantity:
+
+Python equivalent: pandas.DataFrame.assign().
+
+```{r}
+# Create sample data
+df <- data.frame(product = c("A", "B", "C"),
+                 unit_price = c(10, 20, 30),
+                 quantity = c(5, 2, 3))
+
+# Add new variable for total price
+df <- df %>%
+  mutate(total_price = unit_price * quantity)
+
+# View updated data
+df
+```
+
+- dplyr::select()
+
+Used for selecting specific variables from a
+dataset. Here's an example of selecting only the product and quantity
+variables from the df
+
+Python equivalent: pandas.DataFrame.loc[:, column_names] or
+pandas.DataFrame[column_names].
+
+```{r}
+df_selected <- df %>%
+  select(product, quantity)
+
+# Output the resulting dataframe
+df_selected
+```
+
+- dplyr::filter()
+
+Used for filtering rows based on a condition.
+Here's an example of filtering a dataset to only include rows where the
+unit_price is greater than or equal to 20
+
+Python equivalent: pandas.DataFrame.query().
+
+```{r}
+# filter rows where the unit_price is greater than or equal to 20
+filtered_df <- df %>%
+  filter(unit_price >= 20)
+
+# print the filtered dataframe
+print(filtered_df)
+```
+
+- dplyr::arrange()
+
+Used for sorting a dataset by one or more
+variables. Here's an example of sorting the df by the quantity variable
+in descending order:
+
+Python equivalent: pandas.DataFrame.sort_values()
+
+```{r}
+# Sort data by cylinders in descending order
+df %>%
+  arrange(desc(quantity))
+```
+
+- dplyr::summarise()
+
+Used to summarize data into a single value or a small set of values. It
+is often used in combination with other functions such as group_by()
+
+Python equivalent: pandas.DataFrame.groupby().agg() or
+pandas.DataFrame.groupby().apply()
+
+```{r}
+df %>% 
+  summarise(total_sales = sum(unit_price * quantity))
+```
+
+- dplyr::group_by()
+
+a function for grouping a data frame by one or more variables. In this
+example, we first use the group_by() function to group the data frame by
+the 'product' column. This creates a new object called grouped_df, which
+contains the original data frame but with rows grouped by the unique
+values in the 'product' column.
+
+Next, we use the summarize() function to calculate summary statistics
+for each group. This creates a new data frame called summarized_df,
+which contains one row for each unique value in the 'product' column,
+along with the mean 'unit_price' and 'quantity' for each group.
+
+Python equivalent: pandas.DataFrame.groupby().
+
+```{r}
+df2 <- data.frame(product = c("A", "B", "C", "A", "B"),
+                 unit_price = c(10, 20, 30, 15, 25),
+                 quantity = c(5, 2, 3, 6, 1))
+
+# Group the data frame by the 'product' column
+grouped_df <- dplyr::group_by(df2, product)
+
+# Calculate the mean 'unit_price' and 'quantity' for each group
+summarized_df <- dplyr::summarize(grouped_df, avg_unit_price = mean(unit_price), avg_quantity = mean(quantity))
+summarized_df
+```
+
+##### 4.4.4 tidyr
+
+The goal of tidyr is to help you create tidy data. Tidy data is data
+where:
+
+-   Every column is variable.
+-   Every row is an observation.
+-   Every cell is a single value.
+
+Tidy data describes a standard way of storing data that is used wherever
+possible throughout the tidyverse.
+
+- tidyr::gather()
+
+This function converts "wide" data to "long" data by gathering columns
+into key-value pairs. In this example, the gather function is used to
+convert the data from wide format to long format, with the country
+column as the id column, the year column as the key column, and the
+expectancy column as the value column. The resulting dataframe
+
+Python equivalent: pd.melt()
+
+```{r}
+# create a small life expectancy dataset
+life_expectancy <- data.frame(
+  country = c("Australia", "Canada", "France"),
+  `2010` = c(82.0, 80.7, 81.8),
+  `2015` = c(82.4, 81.5, 82.3),
+  `2020` = c(83.0, 81.9, 83.0)
+)
+life_expectancy
+
+# use gather to convert the data from wide to long format
+life_expectancy_long <- gather(life_expectancy, year, expectancy, -country)
+
+# print the long format data
+print(life_expectancy_long)
+```
+
+- tidyr::spread()
+
+This function is the opposite of gather(). It takes key-value pairs and
+spreads them out into separate columns.
+
+Python equivalent: pd.pivot()
+
+```{r}
+# use spread to convert the data from long to wide format
+life_expectancy_wide <- spread(life_expectancy_long, key = year, value = expectancy)
+
+# print the wide format data
+print(life_expectancy_wide)
+```
+
+- tidyr::separate()
+
+This function separates one column into multiple columns based on a
+separator character.
+
+Python equivalent: str.split()
+
+```{r}
+df <- data.frame(x = c("a_1", "b_2"))
+tidyr::separate(df, x, c("letter", "number"), sep = "_")
+```
+
+- tidyr::fill()
+
+This function replaces missing values with the previous non-missing
+value.
+
+Python equivalent: df.fillna(method='ffill')
+
+```{r}
+df <- data.frame(x = c(1, NA, NA, 4))
+tidyr::fill(df, x)
+```
+
+- tidyr::drop_na()
+
+This function removes rows with missing values.
+
+Python equivalent: df.dropna()
+
+```{r}
+df <- data.frame(x = c(1, 2, NA), y = c(3, NA, 5))
+tidyr::drop_na(df)
+```
+
+- tidyr::replace_na()
+
+This function replaces missing values with a specified value.
+
+Python equivalent: df.fillna(value)
+
+```{r}
+df <- data.frame(x = c(1, 2, NA), y = c(3, NA, 5))
+tidyr::replace_na(df, list(x = 0, y = 99))
+```
+
+##### 4.4.5 readr
+
+The goal of readr is to provide a fast and friendly way to read
+rectangular data from delimited files, such as comma-separated values
+(CSV) and tab-separated values (TSV).
+
+-   read_csv(): comma-separated values (CSV)
+-   read_tsv(): tab-separated values (TSV)
+-   read_csv2(): semicolon-separated values with , as the decimal mark
+-   read_delim(): delimited files (CSV and TSV are important special
+    cases)
+-   read_fwf(): fixed-width files
+-   read_table(): whitespace-separated files
+-   read_log(): web log files
+
+##### 4.4.6 tibble
+
+Tibble is an R package that provides a modern reimagining of the
+data.frame. It offers a suite of functions that make it easy to create,
+manipulate, and analyze data in R.
+
+- tibble::tibble()
+
+Creates a tibble from input vectors or data frames.
+
+Python equivalent: pandas.DataFrame: Creates a DataFrame from input
+arrays or lists.
+
+```{r}
+# create a tibble with three columns
+library(tibble)
+tb <- tibble(a = 1:3, b = c("one", "two", "three"), c = TRUE)
+
+# print the tibble
+print(tb)
+```
+
+**More functions of tibble:**
+
+-   as_tibble(): Converts a data frame to a tibble.
+-   add_column(): Adds new columns to a tibble.
+-   select(): Selects specific columns of a tibble.
+-   filter(): Filters rows of a tibble based on a condition.
+-   mutate(): Adds new columns or modifies existing columns in a tibble.
+-   group_by(): Groups a tibble by one or more columns.
+-   summarize(): Aggregates data within groups defined by group_by().
+-   slice(): Selects specific rows of a tibble.
+-   arrange(): Sorts a tibble by one or more columns.
+
+##### 4.4.7 ggplot2
+
+ggplot2 is a popular package in R used for data visualization.
+
+- ggplot2::ggplot()
+
+Initializes a plot and sets its default data and aesthetics.
+
+Equivalent in matplotlib: plt.subplots().
+
+```{r}
+# created a blank canvas for the plot. any visual elements haven't added to it yet.
+data(mpg)
+p <- ggplot(data = mpg, aes(x = displ, y = hwy))
+p
+```
+
+**geom_point():** This is used to add points to the plot. Here's an
+example:
+
+```{r}
+p + geom_point()
+```
+
+**geom_line():** This is used to add lines to the plot. Here's an
+example:
+
+```{r}
+p + geom_line()
+```
+
+**aes():** This is used to specify the aesthetic mappings for the plot.
+Here's an example:
+
+```{r}
+p <- ggplot(data = mpg, aes(x = displ, y = hwy, colour = class)) +
+  geom_point()
+p
+```
+
+**geom_bar():** This is used to add bar plots to the plot. Here's an
+example:
+
+```{r}
+ggplot(data = mpg, aes(x = class)) + geom_bar()
+```
+
+**geom_histogram():** This is used to add histograms to the plot. Here's
+an example:
+
+```{r}
+ggplot(data = mpg, aes(x = hwy)) + geom_histogram()
+```
+
+**geom_density():** This is used to add density plots to the plot.
+Here's an example:
+
+```{r}
+ggplot(data = mpg, aes(x = hwy)) + geom_density()
+```
+
+**facet_wrap():** This is used to create a set of plots with one plot
+for each level of a categorical variable. Here's an example:
+
+```{r}
+ggplot(data = mpg, aes(x = displ, y = hwy)) + geom_point() + facet_wrap(~class)
+```
+
+**theme():** This is used to modify the overall appearance of the plot.
+Here's an example:
+
+```{r}
+ggplot(data = mpg, aes(x = displ, y = hwy)) + geom_point() + theme_bw()
+```
+
+**labs():** This is used to modify the axis labels and plot title.
+Here's an example:
+
+```{r}
+ggplot(data = mpg, aes(x = displ, y = hwy)) + geom_point() + labs(x = "Engine displacement (L)", y = "Highway MPG", title = "Fuel efficiency vs engine size")
+```
+
+##### 4.4.8 Some other useful packages for the rest of the semester:
+
+-   **reshape2** package is used for data reshaping and transformation
+    in R. The Python equivalents mentioned here are based on the pandas
+    library.
+-   **rsample** is an R package for data splitting and model evaluation.
+    Some of the most commonly used functions in the package are:
+    -   initial_split(): splits data into training and testing datasets
+    -   vfold_cv(): creates cross-validation folds for model evaluation
+    -   group_vfold_cv(): creates grouped cross-validation folds for
+        model evaluation
+    -   rolling_origin(): creates time-based rolling windows for model
+        evaluation
+    -   assessment(): calculates evaluation metrics for models on a test
+        set
+    -   summary(): provides a summary of the results of a model
+        evaluation
+    -   confusion_matrix(): creates a confusion matrix for model
+        evaluation
+    -   roc_curve(): creates a receiver operating characteristic (ROC)
+        curve for model evaluation
+    -   calibration_curve(): creates a calibration curve for model
+        evaluation
+    -   yardstick package: extends the functionality of rsample for a
+        wider range of evaluation metrics
+-   **Caret** is an R package that stands for "Classification and
+    Regression Training". Some of the most commonly used functions in
+    the package are:
+    -   train(): trains a predictive model using a specified algorithm
+    -   predict(): makes predictions using a trained model
+    -   createDataPartition(): creates partitions of the data for
+        training and testing purposes
+    -   resamples(): creates multiple random splits of the data for
+        cross-validation
+    -   trainControl(): specifies the type of cross-validation to use
+        during model training
+    -   tuneGrid(): specifies the grid of hyperparameters to search over
+        during model tuning
+    -   varImp(): computes variable importance measures for a trained
+        model
+    -   confusionMatrix(): computes a confusion matrix for a set of
+        predictions
+    -   plot(): creates diagnostic plots for a trained model
+    -   saveRDS(): saves a trained model object to a file for later use.
+-   **stringr** provides a cohesive set of functions designed to make
+    working with strings as easy as possible.
+-   **scales** provides tools for scaling and formatting plots and axes
+    in R.
+-   **topicmodels** package in R is used for text mining and modeling
+-   **tidytext** package provides a set of tools for text mining and
+    natural language processing (NLP) in R.
+-   **textstem** package provides functions for stemming English
+    language text data.
+-   **clinspacy** is an R package that provides a high-level interface
+    to the Python-based natural language processing library spaCy. It is
+    designed specifically for clinical text processing tasks, such as
+    named entity recognition, concept extraction, and relationship
+    extraction.
+
+## 5. Install Required Packages
+
+R is an open-source language, and developers contribute functionality to
+R via packages. In this practical we will work with three packages:
+`datasauRus` which contains the dataset, and `tidyverse` which is a
+collection of packages for doing data analysis in a "tidy" way (e.g.,
+`dplyr`, `readr`, `tibble`, and `ggplot2`).
+
+Load these packages by running the following in the Console.
+
+```{r, message=FALSE}
+library(tidyverse) 
+library(datasauRus)
+```
+
+If you haven't installed these packages yet and R complains, then you
+can install these packages by running the following command. (Note that
+R package names are case-sensitive)
+
+```{r, eval = FALSE}
+install.packages(c("tidyverse", "datasauRus"))
+```
+
+Note that the packages are also loaded with the same commands in your R
+Markdown document.
+
+## 6. Warm up
+
+Before we introduce the data, let's warm up with some simple exercises.
+
+The top portion of your R Markdown file (between the three dashed lines)
+is called YAML. It stands for "YAML Ain't Markup Language". It is a
+human friendly data serialization standard for all programming
+languages. All you need to know is that this area is called the YAML (we
+will refer to it as such) and that it contains meta information about
+your document.
+
+## 7. YAML
+
+**0. Open the R Markdown (Rmd) file in your project, change the author
+name to your name, and knit the document.**
+
+## 8. Data
+
+The data frame we will be working with today is called
+`datasaurus_dozen` and it's in the `datasauRus` package. Actually, this
+single data frame contains 13 datasets, designed to show us why data
+visualisation is important and how summary statistics alone can be
+misleading. The different datasets are maked by the `dataset` variable.
+
+To find out more about the dataset, type the following in your Console:
+`?datasaurus_dozen`. A question mark before the name of an object will
+always bring up its help file. This command must be ran in the Console.
+
+**1. Based on the help file, how many rows and how many columns does the
+`datasaurus_dozen` file have? What are the variables included in the
+data frame? (this can be hardcoded)**
+
+Let's take a look at what these datasets are. To do so we can make a
+*frequency table* of the dataset variable:
+
+```{r}
+datasaurus_dozen %>%
+  count(dataset)
+```
+
+The original Datasaurus (`dino`) was created by Alberto Cairo in [this
+great blog
+post](http://www.thefunctionalart.com/2016/08/download-datasaurus-never-trust-summary.html).
+The other Dozen were generated using simulated annealing and the process
+is described in the paper *Same Stats, Different Graphs: Generating
+Datasets with Varied Appearance and Identical Statistics* through
+Simulated Annealing by Justin Matejka and George Fitzmaurice. In the
+paper, the authors simulate a variety of datasets that the same summary
+statistics to the Datasaurus but have very different distributions.
+
+## 9. Data visualization and summary
+
+**2. Plot `y` vs. `x` for the `dino` dataset. Then, calculate the
+correlation coefficient between `x` and `y` for this dataset.**
+
+Below is the code you will need to complete this exercise. Basically,
+the answer is already given, but you need to include relevant bits in
+your Rmd document and successfully knit it and view the results.
+
+Start with the `datasaurus_dozen` and pipe it into the `filter` function
+to filter for observations where `dataset == "dino"`. Store the
+resulting filtered data frame as a new data frame called `dino_data`.
+
+```{r}
+dino_data <- datasaurus_dozen %>%
+  filter(dataset == "dino")
+```
+
+There is a lot going on here, so let's slow down and unpack it a bit.
+
+First, the pipe operator: `%>%`, takes what comes before it and sends it
+as the first argument to what comes after it. So here, we're saying
+`filter` the `datasaurus_dozen` data frame for observations where
+`dataset == "dino"`.
+
+Second, the assignment operator: `<-`, assigns the name `dino_data` to
+the filtered data frame.
+
+Next, we need to visualize these data. We will use the `ggplot` function
+for this. Its first argument is the data you're visualizing. Next we
+define the `aes`thetic mappings. In other words, the columns of the data
+that get mapped to certain aesthetic features of the plot, e.g. the `x`
+axis will represent the variable called `x` and the `y` axis will
+represent the variable called `y`. Then, we add another layer to this
+plot where we define which `geom`etric shapes we want to use to
+represent each observation in the data. In this case we want these to be
+points,m hence `geom_point`.
+
+```{r fig.fullwidth=TRUE}
+ggplot(data = dino_data, mapping = aes(x = x, y = y)) +
+  geom_point()
+```
+
+If this seems like a lot, it is. And you will learn about the philosophy
+of building data visualizations in layer in detail as we go along. For
+now, follow along with the code that is provided.
+
+For the second part of this exercises, we need to calculate a summary
+statistic: the correlation coefficient. Correlation coefficient, often
+referred to as $r$ in statistics, measures the linear association
+between two variables. You will see that some of the pairs of variables
+we plot do not have a linear relationship between them. This is exactly
+why we want to visualize first: visualize to assess the form of the
+relationship, and calculate $r$ only if relevant. In this case,
+calculating a correlation coefficient really doesn't make sense since
+the relationship between `x` and `y` is definitely not linear -- it's
+dinosaurial!
+
+But, for illustrative purposes, let's calculate correlation coefficient
+between `x` and `y`.
+
+Start with `dino_data` and calculate a summary statistic that we will
+call `r` as the `cor`relation between `x` and `y`.
+
+```{r, eval=FALSE}
+dino_data %>%
+  summarize(r = cor(x, y))
+```
+
+**3. Plot `y` vs. `x` for the `star` dataset. You can (and should) reuse
+code we introduced above, just replace the dataset name with the desired
+dataset. Then, calculate the correlation coefficient between `x` and `y`
+for this dataset. How does this value compare to the `r` of `dino`?**
+
+**4. Plot `y` vs. `x` for the `circle` dataset. You can (and should)
+reuse code we introduced above, just replace the dataset name with the
+desired dataset. Then, calculate the correlation coefficient between `x`
+and `y` for this dataset. How does this value compare to the `r` of
+`dino`?**
+
+Facet by the dataset variable, placing the plots in a 3 column grid, and
+don't add a legend.
+
+**5. Finally, let's plot all datasets at once. In order to do this we
+will make use of facetting.**
+
+```{r all-viz, eval=FALSE, fig.fullwidth=TRUE}
+ggplot(datasaurus_dozen, aes(x = x, y = y, color = dataset))+
+  geom_point()+
+  facet_wrap(~ dataset, ncol = 3) +
+  theme(legend.position = "none")
+```
+
+And we can use the `group_by` function to generate all correlation
+coefficients.
+
+```{r first-10-r, eval=FALSE}
+datasaurus_dozen %>%
+  group_by(dataset) %>%
+  summarize(r = cor(x, y))
+```
+
+You're done with the data analysis exercises, but we'd like you to do
+two more things:
+
+-   **Resize your figures:**
+
+Click on the gear icon in on top of the R Markdown document, and select
+"Output Options..." in the dropdown menu. In the pop up dialogue box go
+to the Figures tab and change the height and width of the figures, and
+hit OK when done. Then, knit your document and see how you like the new
+sizes. Change and knit again and again until you're happy with the
+figure sizes. Note that these values get saved in the YAML.
+
+You can also use different figure sizes for different figures. To do so
+click on the gear icon within the chunk where you want to make a change.
+Changing the figure sizes added new options to these chunks: `fig.width`
+and `fig.height`. You can change them by defining different values
+directly in your R Markdown document as well.
+
+-   **Change the look of your report:**
+
+Once again click on the gear icon in on top of the R Markdown document,
+and select "Output Options..." in the dropdown menu. In the General tab
+of the pop up dialogue box try out different syntax highlighting and
+theme options. Hit OK and knit your document to see how it looks. Play
+around with these until you're happy with the look.
+
+## 10. Optional
+
+If you have time you can explore the different ways you can add styling
+to your rmarkdown document.
+
+Here is a
+[cheatsheet](https://rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf)
+
+and a [markdown cheatsheet](https://www.markdownguide.org/cheat-sheet/)
+
+------------------------------------------------------------------------
+
+This set of lab exercises have been adapted from [Mine
+Çetinkaya-Rundel](https://twitter.com/minebocek)'s class [Introduction
+to Data Science](https://github.com/ids-s1-19) and
+[PM566](https://uscbiostats.github.io/PM566/)
