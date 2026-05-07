@@ -2,7 +2,7 @@
 layout: home
 ---
 
-## 2024-2025 Course Details 
+## 2025-2026 Course Details 
 
 - M/W/F: 1305-1455 (May 11th to June 26th), 1201 Mona Campbell Building
 - Office: 4242 Mona Campbell Building, Studley Campus
