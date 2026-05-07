@@ -28,7 +28,7 @@ Submission will take place via the course brightspace page.
 
 See schedule or syllabus for key due dates.
 
-The full marking rubric is available in the [syllabus](/static_files/2024_syllabus.pdf)
+The full marking rubric is available in the [syllabus](/static_files/2026_syllabus.pdf)
 
 - [Great Interdisciplinary Example Proposal by Alexandra Del Favero-Campbell, Eric Poarch, Harsh Kaushik, & Tsz Kin Siu](static_filess/proposal_class/example2.pdf)
 - [Good Quality Example Proposal by Nathan K. Smith](static_files/proposal_class/example1.pdf)
