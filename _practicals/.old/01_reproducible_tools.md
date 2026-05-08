@@ -1,6 +1,6 @@
 ---
 type: practical
-date: 2025-05-09T13:00:00+3:00
+date: 2026-05-15T13:00:00+3:00
 title: 'Practical 0 - Reproducible Health Data Science Research'
 links:
     - url: /static_files/practicals/lab0_reproducibile_research_rstudio_rmd_git.html
