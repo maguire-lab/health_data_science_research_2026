@@ -8,6 +8,5 @@ links:
        name: A Machine Learning Algorithm to Predict Severe Sepsis and Septic Shock: Development, Implementation, and Impact on Clinical Practice (Critical Care Medicine)
      - url: /static_files/literature/gao_sepsis_prediction_covariate.pdf
        name: More Generalizable Models for Sepsis Detection Under Covariate Shift (AMIA Jt Summits Transl Sci Proc)
-
 ---
 
