@@ -1,6 +1,6 @@
 ---
-title: "Practical 1 — Medical Databases: Predicting Sepsis from ICU Data"
-author: "Finlay Maguire"
+title: "Practical 1 - Medical Databases: Predicting Sepsis from ICU Data"
+author: "REPLACE WITH YOUR NAME"
 date: "`r format(Sys.Date(), '%Y-%m-%d')`"
 output:
   html_document:
@@ -99,9 +99,6 @@ if (!file.exists(rds_path)) {
   download.file(data_url, rds_path, mode = "wb", quiet = TRUE)
 }
 sepsis <- readRDS(rds_path)
-
-sepsis <- readRDS("~/Downloads/physionet_subsample_modified.rds")
-
 ```
 
 ### 2.2 Train / test split
@@ -321,7 +318,6 @@ add_features <- function(df) {
                       labels = c("<=40", "41-65", "66-80", "80+"))
     )
 }
-
 train <- add_features(train)
 test  <- add_features(test)
 ```
@@ -458,12 +454,9 @@ In the real-world we'd try to optimise these models further and/or try some diff
 ### 6.1 Finalise the best model
 
 ```{r finalise}
-# we need to add our 
-
-
 best_id <- rank_results(tuned, rank_metric = "pr_auc",
                         select_best = TRUE) |>
-  filter(.metric == "pr_auc"
+  filter(.metric == "pr_auc") |>
   slice_head(n = 1) |>
   pull(wflow_id)
 
@@ -473,6 +466,7 @@ final_wf <- extract_workflow(tuned, id = best_id) |>
       select_best(metric = "pr_auc")
   )
 
+split <- make_splits(train, test)
 final_fit <- last_fit(final_wf, split = split, metrics = cls_metrics)
 collect_metrics(final_fit)
 ```
@@ -482,16 +476,18 @@ collect_metrics(final_fit)
 preds <- collect_predictions(final_fit)
 
 preds |>
-  pr_curve(truth = sepsis_label, .pred_sepsis,
+  pr_curve(truth = SepsisLabel, .pred_Sepsis,
            event_level = "first") |>
   autoplot() + labs(title = "Precision–Recall curve (test set)")
 ```
 
 ### 6.3 Confusion matrix
 
+**Q15 (1 marks).** How many times were true sepsis cases classified as non-sepsis in the test set? Is this more or less than the correct sepsis predictions?
+
 ```{r conf-matrix}
 preds |>
-  conf_mat(truth = sepsis_label, estimate = .pred_class) |>
+  conf_mat(truth = SepsisLabel, estimate = .pred_class) |>
   autoplot(type = "heatmap") +
   scale_fill_gradient(low = "white", high = "firebrick") +
   labs(title = "Confusion matrix (threshold = 0.5)")
@@ -503,48 +499,42 @@ preds |>
 
 ### 7.1 Subgroup performance
 
-Does the model work equally well across patient groups?
-
-```{r build-errors}
-errors <- preds |>
-  bind_cols(
-    test |>
-      select(-sepsis_label) |>
-      slice(preds$.row)
-  )
-```
+Now let's investigate whether the model work equally well/badly across patient groups?
 
 ```{r subgroup-auc, fig.height = 3.5}
+errors <- augment(final_fit)
+
 subgroup_auc <- function(df, group_var) {
   df |>
     group_by({{ group_var }}) |>
-    filter(n_distinct(sepsis_label) == 2) |>
-    roc_auc(truth = sepsis_label, .pred_sepsis,
+    filter(n_distinct(SepsisLabel) == 2) |>
+    roc_auc(truth = SepsisLabel, .pred_Sepsis,
             event_level = "second") |>
     select({{ group_var }}, .estimate)
 }
 
 overall_auc <- collect_metrics(final_fit) |>
-  filter(.metric == "roc_auc") |>
+  filter(.metric == "pr_auc") |>
   pull(.estimate)
 
 bind_rows(
-  errors |> subgroup_auc(gender)   |> rename(subgroup = 1) |> mutate(group = "Sex"),
-  errors |> subgroup_auc(icu_unit) |> rename(subgroup = 1) |> mutate(group = "ICU unit"),
-  errors |> subgroup_auc(age_group)|> rename(subgroup = 1) |> mutate(group = "Age group")
+  errors |> subgroup_auc(Gender)    |> rename(subgroup = 1) |>
+    mutate(subgroup = as.character(subgroup), group = "Sex"),
+  errors |> subgroup_auc(age_group) |> rename(subgroup = 1) |>
+    mutate(subgroup = as.character(subgroup), group = "Age group")
 ) |>
   ggplot(aes(reorder(subgroup, .estimate), .estimate, fill = group)) +
   geom_col() +
   geom_hline(yintercept = overall_auc, linetype = 2, colour = "grey40") +
   coord_flip() +
   facet_grid(group ~ ., scales = "free_y", space = "free_y") +
-  labs(x = NULL, y = "ROC-AUC",
-       title = "Subgroup ROC-AUC",
+  labs(x = NULL, y = "PR-AUC",
+       title = "Subgroup PR-AUC",
        subtitle = "Dashed line = overall test AUC") +
   theme(legend.position = "none")
 ```
 
-**Q15 (2 marks).** Is there a subgroup where the model performs noticeably worse than the overall AUC?
+**Q15 (2 marks).** Is there a subgroup where the model performs noticeably worse than the overall PR-AUC?
 Suggest one data-driven reason and one clinical reason that could explain the gap.
 
 ### 7.2 Variable importance
@@ -569,11 +559,11 @@ importance_tbl |>
   slice_max(importance, n = 20) |>
   ggplot(aes(importance, fct_reorder(variable, importance))) +
   geom_col(fill = "steelblue") +
-  labs(title = paste("Top variable importances —", best_id),
+  labs(title = paste("Top variable importances: ", best_id),
        x = "Importance", y = NULL)
 ```
 
-**Q16 (2 marks).** Compare the top five most important variables to the three predictors you identified in Q1.
+**Q16 (2 marks).** Compare the top 3 most important variables to the three predictors you identified in Q1.
 Do they match? Write one sentence about any variable that surprised you.
 
 ---
