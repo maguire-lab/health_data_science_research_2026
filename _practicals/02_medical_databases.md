@@ -10,4 +10,5 @@ links:
     - url: /static_files/practicals/lab1_medical_databases.html
       name: Practical (html)
     - url: /static_files/practicals/lab1_medical_databases.rmd
+      name: Practical (rmd)
 ---
