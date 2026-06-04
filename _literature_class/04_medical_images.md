@@ -1,6 +1,6 @@
 ---
 type: literature
-date: 2025-06-10T13:00:00+3:00
+date: 2026-06-10T13:00:00+3:00
 title: Literature 3 - Medical Imaging
 tldr: "Student led discussion of 2 papers analysing medical image data"
 links: 
