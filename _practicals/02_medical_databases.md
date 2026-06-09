@@ -9,6 +9,6 @@ due_event:
 links:
     - url: /static_files/practicals/lab1_medical_databases.html
       name: Practical (html)
-    - url: /static_files/practicals/lab1_medical_databases.rmd
+    - https://raw.githubusercontent.com/maguire-lab/health_data_science_research_2026/refs/heads/main/static_files/practicals/lab1_medical_databases.rmd
       name: Practical (rmd)
 ---
